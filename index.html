@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سيد مصطفى الحسيني - للتجارة العامة</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif;}
+        body {background: #f8f9fa; min-height: 100vh; padding-bottom: 30px;}
+
+        /* 🖼️ صورة المحل كخلفية علوية كاملة */
+        .banner {
+            width: 100%;
+            height: 320px;
+            background: url('https://i.imgur.com/zhJ8amy.jpg') center/contain no-repeat;
+            background-color: #0b3d91;
+            position: relative;
+        }
+        .banner-overlay {position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.15));}
+        .admin-btn {position: absolute; top: 15px; left: 15px; background: #f59e0b; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 14px; cursor: pointer; z-index: 10;}
+
+        /* 📌 معلومات المتجر */
+        .store-info {background: linear-gradient(135deg, #0b3d91, #1e5799); color: white; padding: 20px 15px; text-align: center;}
+        .store-name {font-size: 24px; font-weight: bold; margin-bottom: 5px;}
+        .store-location {font-size: 15px; opacity: 0.9;}
+        .store-features {display: flex; justify-content: center; gap: 20px; margin-top: 12px; flex-wrap: wrap; font-size: 14px;}
+        .feature {display: flex; align-items: center; gap: 5px;}
+
+        /* 📦 شبكة المنتجات */
+        .products-grid {display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px 15px; max-width: 1200px; margin: 0 auto;}
+        .product-card {background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: 0.3s; position: relative;}
+        .product-card:hover {transform: translateY(-5px);}
+        .del-btn {position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; display: none; z-index: 10;}
+        .admin-mode .del-btn {display: flex; align-items: center; justify-content: center;}
+        
+        .product-img {width: 100%; height: 280px; background: #eef2ff; object-fit: cover; display: block;}
+        .product-name {font-size: 20px; font-weight: bold; color: #222; padding: 15px 15px 10px; text-align: center;}
+        
+        /* 📞 أزرار التواصل */
+        .contact-buttons {display: flex; gap: 10px; padding: 0 15px 15px;}
+        .call-btn {flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #0b3d91; color: white; padding: 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 600;}
+        .whatsapp-btn {flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #25d366; color: white; padding: 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 600;}
+        
+        .add-fab {position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: #22c55e; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 4px 15px rgba(34,197,94,0.4); z-index: 90;}
+        .admin-mode .add-fab {display: flex;}
+
+        /* 🔐 لوحة التحكم */
+        .modal {position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;}
+        .modal.show {display: flex;}
+        .modal-box {background: white; border-radius: 16px; padding: 25px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;}
+        .modal-box h2 {color: #0b3d91; margin-bottom: 20px; text-align: center;}
+        .modal-box input {width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-size: 15px;}
+        .modal-box button {width: 100%; padding: 13px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        .btn-save {background: #22c55e; color: white;}
+        .btn-close {background: #ef4444; color: white;}
+        .btn-settings {background: #f59e0b; color: white; margin-top: 5px;}
+        .preview-img {width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin: 10px auto; display: none;}
+        
+        .toast {position: fixed; top: 80px; right: 50%; transform: translateX(50%); background: #22c55e; color: white; padding: 15px 30px; border-radius: 10px; font-size: 16px; z-index: 300; display: none;}
+        .toast.show {display: block;}
+        .loading {text-align: center; padding: 40px; color: #0b3d91; font-size: 18px;}
+        .empty-state {text-align: center; padding: 60px 20px; color: #888; font-size: 17px;}
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body id="pageBody">
+
+    <div class="toast" id="toast">✅ تم الحفظ!</div>
+
+    <!-- 🖼️ صورتك في الأعلى مباشرة -->
+    <div class="banner">
+        <button class="admin-btn" onclick="openPassModal()">⚙️ تحكم</button>
+        <div class="banner-overlay"></div>
+    </div>
+
+    <!-- 📌 بيانات المتجر -->
+    <div class="store-info">
+        <h1 class="store-name" id="storeName">سيد مصطفى الحسيني - للتجارة العامة</h1>
+        <p class="store-location" id="storeLocation"><i class="fas fa-map-marker-alt"></i> واسط - قضاء الصويرة</p>
+        <div class="store-features">
+            <span class="feature"><i class="fas fa-star"></i> جودة عالية وأسعار منافسة</span>
+            <span class="feature"><i class="fas fa-truck"></i> توصيل لكافة المناطق</span>
+        </div>
+    </div>
+
+    <!-- 📦 المنتجات -->
+    <div class="products-grid" id="productsGrid"></div>
+    <div class="loading" id="loading">جاري تحميل المنتجات...</div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+        <i class="fas fa-box-open" style="font-size:50px; color:#ddd;"></i>
+        <p>لا توجد منتجات حتى الآن</p>
+    </div>
+
+    <!-- ➕ زر إضافة -->
+    <a class="add-fab" id="addBtn" onclick="openAddModal()">+</a>
+
+    <!-- 🔐 كلمة المرور -->
+    <div class="modal" id="passModal">
+        <div class="modal-box">
+            <h2>🔐 لوحة التحكم</h2>
+            <input type="password" id="adminPass" placeholder="كلمة المرور">
+            <button class="btn-save" onclick="checkPass()">دخول</button>
+            <button class="btn-close" onclick="closeModal('passModal')">إلغاء</button>
+            <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
+            <button class="btn-settings" onclick="openSettingsModal()">🏪 إعدادات المتجر</button>
+        </div>
+    </div>
+
+    <!-- ➕ إضافة/تعديل منتج -->
+    <div class="modal" id="productModal">
+        <div class="modal-box">
+            <h2 id="prodModalTitle">إضافة منتج جديد</h2>
+            <input type="text" id="prodName" placeholder="اسم المنتج">
+            <input type="file" id="prodImage" accept="image/*" onchange="previewImage(event)">
+            <img id="imgPreview" class="preview-img">
+            <input type="tel" id="prodPhone" placeholder="رقم الهاتف (اتصال)">
+            <input type="tel" id="prodWhatsapp" placeholder="رقم الواتساب">
+            <input type="hidden" id="editKey">
+            <button class="btn-save" onclick="saveProduct()">✅ حفظ</button>
+            <button class="btn-close" onclick="closeModal('productModal')">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- ⚙️ إعدادات المتجر -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-box">
+            <h2>⚙️ إعدادات المتجر</h2>
+            <input type="text" id="setStoreName" placeholder="اسم المتجر">
+            <input type="text" id="setStoreLocation" placeholder="الموقع">
+            <button class="btn-save" onclick="saveSettings()">✅ حفظ</button>
+            <button class="btn-close" onclick="closeModal('settingsModal')">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        // 🔑 بياناتك
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmKumbv8I1WduHEuDwoux8XiXSRfkUQ4k",
+            authDomain: "husaini-store.firebaseapp.com",
+            databaseURL: "https://husaini-store-default-rtdb.firebaseio.com",
+            projectId: "husaini-store",
+            storageBucket: "husaini-store.firebasestorage.app",
+            messagingSenderId: "8351995699",
+            appId: "1:8351995699:web:a363775319ce69f26dd046",
+            measurementId: "G-0EB7540YN5"
+        };
+
+        const ADMIN_PASS = "123456";
+        let isAdmin = false;
+        let currentImageData = "";
+
+        // 🚀 اتصال قاعدة البيانات
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const productsRef = db.ref("products");
+        const settingsRef = db.ref("settings");
+
+        function showToast(msg = "✅ تم الحفظ!") {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        function previewImage(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const r = new FileReader();
+                r.onload = ev => {
+                    currentImageData = ev.target.result;
+                    document.getElementById('imgPreview').src = currentImageData;
+                    document.getElementById('imgPreview').style.display = 'block';
+                };
+                r.readAsDataURL(file);
+            }
+        }
+
+        // 📡 تحميل الإعدادات
+        settingsRef.on("value", snap => {
+            const s = snap.val() || {};
+            document.getElementById('storeName').textContent = s.storeName || "سيد مصطفى الحسيني - للتجارة العامة";
+            document.getElementById('storeLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${s.storeLocation || "واسط - قضاء الصويرة"}`;
+            document.getElementById('setStoreName').value = s.storeName || '';
+            document.getElementById('setStoreLocation').value = s.storeLocation || '';
+        });
+
+        // 📡 تحميل المنتجات
+        productsRef.on("value", snap => {
+            document.getElementById('loading').style.display = 'none';
+            const data = snap.val() || {};
+            const list = Object.entries(data).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.time||0)-(a.time||0));
+            
+            if (list.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('productsGrid').innerHTML = '';
+                return;
+            }
+            document.getElementById('emptyState').style.display = 'none';
+            
+            document.getElementById('productsGrid').innerHTML = list.map(item => `
+                <div class="product-card" onclick="${isAdmin ? `editProduct('${item.key}','${item.name}','${item.img}','${item.phone||''}','${item.whatsapp||''}')` : ''}">
+                    <button class="del-btn" onclick="event.stopPropagation(); deleteProduct('${item.key}')">×</button>
+                    <img class="product-img" src="${item.img}" alt="${item.name}">
+                    <h3 class="product-name">${item.name}</h3>
+                    <div class="contact-buttons">
+                        <a class="call-btn" href="tel:${item.phone||''}" onclick="event.stopPropagation()">
+                            <i class="fas fa-phone"></i> اتصال
+                        </a>
+                        <a class="whatsapp-btn" href="https://wa.me/${(item.whatsapp||'').replace(/\D/g,'')}" target="_blank" onclick="event.stopPropagation()">
+                            <i class="fab fa-whatsapp"></i> واتساب
+                        </a>
+                    </div>
+                </div>`).join('');
+        });
+
+        // 🔐 الدخول
+        function openPassModal() {document.getElementById('passModal').classList.add('show');}
+        function closeModal(id) {document.getElementById(id).classList.remove('show');}
+        function checkPass() {
+            if (document.getElementById('adminPass').value === ADMIN_PASS) {
+                isAdmin = true;
+                document.getElementById('pageBody').classList.add('admin-mode');
+                closeModal('passModal');
+                showToast("✅ تم الدخول");
+            } else alert("❌ كلمة المرور خطأ!");
+        }
+
+        // ➕ إضافة منتج
+        function openAddModal() {
+            document.getElementById('prodModalTitle').textContent = 'إضافة منتج جديد';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPhone').value = '';
+            document.getElementById('prodWhatsapp').value = '';
+            document.getElementById('editKey').value = '';
+            document.getElementById('imgPreview').style.display = 'none';
+            currentImageData = '';
+            document.getElementById('productModal').classList.add('show');
+        }
+
+        // ✏️ تعديل منتج
+        function editProduct(key, name, img, phone, whatsapp) {
+            if (!isAdmin) return;
+            document.getElementById('prodModalTitle').textContent = 'تعديل المنتج';
+            document.getElementById('prodName').value = name;
+            document.getElementById('prodPhone').value = phone;
+            document.getElementById('prodWhatsapp').value = whatsapp;
+            document.getElementById('editKey').value = key;
+            currentImageData = img;
+            document.getElementById('imgPreview').src = img;
+            document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('productModal').classList.add('show');
+        }
+
+        // 💾 حفظ منتج
+        async function saveProduct() {
+            const name = document.getElementById('prodName').value.trim();
+            const phone = document.getElementById('prodPhone').value.trim();
+            const whatsapp = document.getElementById('prodWhatsapp').value.trim();
+            const editKey = document.getElementById('editKey').value;
+            const img = currentImageData || "https://via.placeholder.com/400x400/cccccc/333333?text=صورة+المنتج";
+            if (!name) return alert("أدخلي اسم المنتج!");
+
+            if (editKey) {
+                await productsRef.child(editKey).update({name, img, phone, whatsapp});
+            } else {
+                await productsRef.push({name, img, phone, whatsapp, time: Date.now()});
+            }
+            showToast();
+            closeModal('productModal');
+        }
+
+        // 🗑️ حذف منتج
+        async function deleteProduct(key) {
+            if (!confirm("حذف المنتج؟")) return;
+            await productsRef.child(key).remove();
+            showToast("✅ تم الحذف");
+        }
+
+        // ⚙️ إعدادات المتجر
+        function openSettingsModal() {
+            closeModal('passModal');
+            document.getElementById('settingsModal').classList.add('show');
+        }
+        async function saveSettings() {
+            const storeName = document.getElementById('setStoreName').value.trim();
+            const storeLocation = document.getElementById('setStoreLocation').value.trim();
+            await settingsRef.set({storeName, storeLocation});
+            showToast("✅ تم تحديث بيانات المتجر");
+            closeModal('settingsModal');
+        }
+    </script>
+</body>
+</html>

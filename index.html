@@ -12,11 +12,11 @@
         * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif;}
         body {background: #f8f9fa; min-height: 100vh; padding-bottom: 30px;}
 
-        /* 🖼️ الصورة */
+        /* 🖼️ الصورة المؤقتة */
         .banner {
             width: 100%;
-            background: #0b3d91;
-            padding: 10px;
+            background: linear-gradient(135deg, #0b3d91, #1e5799);
+            padding: 15px;
             position: relative;
         }
         .banner-img {
@@ -25,7 +25,8 @@
             display: block;
             max-width: 1200px;
             margin: 0 auto;
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .admin-btn {
             position: absolute;
@@ -41,7 +42,7 @@
             z-index: 10;
         }
 
-        /* 📌 بيانات المتجر */
+        /* 📌 بيانات المتجر - ثابتة لا تتغير */
         .store-info {
             background: linear-gradient(135deg, #0b3d91, #1e5799);
             color: white;
@@ -80,7 +81,6 @@
         .modal-box button {width: 100%; padding: 13px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px;}
         .btn-save {background: #22c55e; color: white;}
         .btn-close {background: #ef4444; color: white;}
-        .btn-settings {background: #f59e0b; color: white; margin-top: 5px;}
         .preview-img {width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin: 10px auto; display: none;}
         
         .toast {position: fixed; top: 80px; right: 50%; transform: translateX(50%); background: #22c55e; color: white; padding: 15px 30px; border-radius: 10px; font-size: 16px; z-index: 300; display: none;}
@@ -95,18 +95,18 @@
 
     <div class="toast" id="toast">✅ تم الحفظ!</div>
 
-    <!-- 🖼️ الصورة -->
+    <!-- 🖼️ صورة بديلة مضمونة -->
     <div class="banner">
         <button class="admin-btn" onclick="openPassModal()">⚙️ تحكم</button>
-        <img class="banner-img" src="https://i.imgur.com/zhJ8amy.jpg" alt="سيد مصطفى الحسيني - للتجارة العامة">
+        <img class="banner-img" src="https://picsum.photos/1200/400" alt="سيد مصطفى الحسيني - للتجارة العامة">
     </div>
 
-    <!-- 📌 بيانات المتجر -->
+    <!-- 📌 بيانات ثابتة - لا تعديل -->
     <div class="store-info">
-        <h1 class="store-name" id="storeName">سيد مصطفى الحسيني - للتجارة العامة</h1>
-        <p class="store-location" id="storeLocation"><i class="fas fa-map-marker-alt"></i> واسط - قضاء الصويرة</p>
+        <h1 class="store-name">سيد مصطفى الحسيني - للتجارة العامة</h1>
+        <p class="store-location"><i class="fas fa-map-marker-alt"></i> واسط - قضاء الصويرة</p>
         <div class="store-features">
-            <span class="feature"><i class="fas fa-star"></i جودة عالية وأسعار منافسة</span>
+            <span class="feature"><i class="fas fa-star"></i> جودة عالية وأسعار منافسة</span>
             <span class="feature"><i class="fas fa-truck"></i> توصيل لكافة المناطق</span>
         </div>
     </div>
@@ -119,44 +119,31 @@
         <p>لا توجد منتجات حتى الآن</p>
     </div>
 
-    <!-- ➕ زر إضافة -->
+    <!-- ➕ زر إضافة - مخفي حتى كلمة المرور -->
     <a class="add-fab" id="addBtn" onclick="openAddModal()">+</a>
 
-    <!-- 🔐 كلمة المرور - تفتح كل شيء -->
+    <!-- 🔐 نافذة كلمة المرور -->
     <div class="modal" id="passModal">
         <div class="modal-box">
             <h2>🔐 لوحة التحكم</h2>
-            <input type="password" id="adminPass" placeholder="كلمة المرور">
+            <input type="password" id="adminPass" placeholder="اكتبي كلمة المرور">
             <button class="btn-save" onclick="checkPass()">دخول</button>
             <button class="btn-close" onclick="closeModal('passModal')">إلغاء</button>
-            <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
-            <button class="btn-settings" onclick="openSettingsModal()">🏪 إعدادات المتجر</button>
         </div>
     </div>
 
-    <!-- ➕ إضافة/تعديل منتج -->
+    <!-- ➕ إضافة/تعديل منتج فقط -->
     <div class="modal" id="productModal">
         <div class="modal-box">
             <h2 id="prodModalTitle">إضافة منتج جديد</h2>
             <input type="text" id="prodName" placeholder="اسم المنتج">
             <input type="file" id="prodImage" accept="image/*" onchange="previewImage(event)">
             <img id="imgPreview" class="preview-img">
-            <input type="tel" id="prodPhone" placeholder="رقم الهاتف (اتصال)">
+            <input type="tel" id="prodPhone" placeholder="رقم الهاتف">
             <input type="tel" id="prodWhatsapp" placeholder="رقم الواتساب">
             <input type="hidden" id="editKey">
             <button class="btn-save" onclick="saveProduct()">✅ حفظ</button>
             <button class="btn-close" onclick="closeModal('productModal')">إلغاء</button>
-        </div>
-    </div>
-
-    <!-- ⚙️ إعدادات المتجر - تفتح فقط بعد إدخال كلمة المرور -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-box">
-            <h2>⚙️ إعدادات المتجر</h2>
-            <input type="text" id="setStoreName" placeholder="اسم المتجر">
-            <input type="text" id="setStoreLocation" placeholder="الموقع">
-            <button class="btn-save" onclick="saveSettings()">✅ حفظ</button>
-            <button class="btn-close" onclick="closeModal('settingsModal')">إلغاء</button>
         </div>
     </div>
 
@@ -179,7 +166,6 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const productsRef = db.ref("products");
-        const settingsRef = db.ref("settings");
 
         function showToast(msg = "✅ تم الحفظ!") {
             const t = document.getElementById('toast');
@@ -200,14 +186,6 @@
                 r.readAsDataURL(file);
             }
         }
-
-        settingsRef.on("value", snap => {
-            const s = snap.val() || {};
-            document.getElementById('storeName').textContent = s.storeName || "سيد مصطفى الحسيني - للتجارة العامة";
-            document.getElementById('storeLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${s.storeLocation || "واسط - قضاء الصويرة"}`;
-            document.getElementById('setStoreName').value = s.storeName || '';
-            document.getElementById('setStoreLocation').value = s.storeLocation || '';
-        });
 
         productsRef.on("value", snap => {
             document.getElementById('loading').style.display = 'none';
@@ -237,25 +215,23 @@
                 </div>`).join('');
         });
 
-        // 🔐 فتح كلمة المرور
-        function openPassModal() {document.getElementById('passModal').classList.add('show');}
-        function closeModal(id) {document.getElementById(id).classList.remove('show');}
+        function openPassModal() {
+            document.getElementById('passModal').classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
         function checkPass() {
             if (document.getElementById('adminPass').value === ADMIN_PASS) {
                 isAdmin = true;
                 document.getElementById('pageBody').classList.add('admin-mode');
-                showToast("✅ تم الدخول");
-            } else alert("❌ كلمة المرور خطأ!");
-        }
-
-        // ⚙️ فتح إعدادات المتجر - فقط بعد كلمة المرور الصحيحة
-        function openSettingsModal() {
-            if (!isAdmin) {
-                alert("❌ أدخل كلمة المرور أولاً!");
-                return;
+                closeModal('passModal');
+                showToast("✅ أهلاً بك!");
+            } else {
+                alert("❌ كلمة المرور خطأ!");
             }
-            closeModal('passModal');
-            document.getElementById('settingsModal').classList.add('show');
         }
 
         function openAddModal() {
@@ -289,7 +265,7 @@
             const phone = document.getElementById('prodPhone').value.trim();
             const whatsapp = document.getElementById('prodWhatsapp').value.trim();
             const editKey = document.getElementById('editKey').value;
-            const img = currentImageData || "https://via.placeholder.com/400x400/cccccc/333333?text=صورة+المنتج";
+            const img = currentImageData || "https://picsum.photos/400/400";
             if (!name) return alert("أدخلي اسم المنتج!");
 
             if (editKey) {
@@ -306,15 +282,6 @@
             if (!confirm("حذف المنتج؟")) return;
             await productsRef.child(key).remove();
             showToast("✅ تم الحذف");
-        }
-
-        async function saveSettings() {
-            if (!isAdmin) return;
-            const storeName = document.getElementById('setStoreName').value.trim();
-            const storeLocation = document.getElementById('setStoreLocation').value.trim();
-            await settingsRef.set({storeName, storeLocation});
-            showToast("✅ تم تحديث بيانات المتجر");
-            closeModal('settingsModal');
         }
     </script>
 </body>

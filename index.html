@@ -12,7 +12,7 @@
         * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif;}
         body {background: #f8f9fa; min-height: 100vh; padding-bottom: 30px;}
 
-        /* 🖼️ الصورة المؤقتة */
+        /* 🖼️ الصورة المصممة حسب الوصف */
         .banner {
             width: 100%;
             background: linear-gradient(135deg, #0b3d91, #1e5799);
@@ -27,6 +27,20 @@
             margin: 0 auto;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: linear-gradient(90deg, 
+                #0b3d91 0%, #0b3d91 35%,  /* جادر أزرق */
+                #facc15 35%, #facc15 65%,  /* نايلون أصفر */
+                #854d0e 65%, #854d0e 80%,  /* خيط كبوب */
+                #16a34a 80%, #16a34a 100%  /* مواد زراعية */
+            );
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .admin-btn {
             position: absolute;
@@ -42,7 +56,7 @@
             z-index: 10;
         }
 
-        /* 📌 بيانات المتجر - ثابتة لا تتغير */
+        /* 📌 بيانات ثابتة */
         .store-info {
             background: linear-gradient(135deg, #0b3d91, #1e5799);
             color: white;
@@ -87,6 +101,12 @@
         .toast.show {display: block;}
         .loading {text-align: center; padding: 40px; color: #0b3d91; font-size: 18px;}
         .empty-state {text-align: center; padding: 60px 20px; color: #888; font-size: 17px;}
+
+        /* 📱 شاشات صغيرة */
+        @media (max-width: 600px) {
+            .banner-img {font-size: 16px; min-height: 140px;}
+            .store-name {font-size: 20px;}
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -95,19 +115,22 @@
 
     <div class="toast" id="toast">✅ تم الحفظ!</div>
 
-    <!-- 🖼️ صورة بديلة مضمونة -->
+    <!-- 🖼️ الصورة المصممة خصيصًا لك -->
     <div class="banner">
         <button class="admin-btn" onclick="openPassModal()">⚙️ تحكم</button>
-        <img class="banner-img" src="https://picsum.photos/1200/400" alt="سيد مصطفى الحسيني - للتجارة العامة">
+        <div class="banner-img">
+            <span>جادر أزرق • نايلون أصفر • خيط كبوب • مواد زراعية</span>
+        </div>
     </div>
 
-    <!-- 📌 بيانات ثابتة - لا تعديل -->
+    <!-- 📌 بيانات ثابتة -->
     <div class="store-info">
         <h1 class="store-name">سيد مصطفى الحسيني - للتجارة العامة</h1>
         <p class="store-location"><i class="fas fa-map-marker-alt"></i> واسط - قضاء الصويرة</p>
         <div class="store-features">
-            <span class="feature"><i class="fas fa-star"></i> جودة عالية وأسعار منافسة</span>
-            <span class="feature"><i class="fas fa-truck"></i> توصيل لكافة المناطق</span>
+            <span class="feature"><i class="fas fa-seedling"></i> مواد زراعية</span>
+            <span class="feature"><i class="fas fa-box"></i> جادر ونايلون</span>
+            <span class="feature"><i class="fas fa-thread"></i> خيط كبوب</span>
         </div>
     </div>
 

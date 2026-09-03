@@ -12,7 +12,7 @@
         * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif;}
         body {background: #f8f9fa; min-height: 100vh; padding-bottom: 30px;}
 
-        /* 📌 رأس المتجر بدون صورة */
+        /* 📌 رأس المتجر */
         .store-header {
             background: linear-gradient(135deg, #0b3d91, #1e5799);
             color: white;
@@ -33,244 +33,66 @@
             cursor: pointer;
             z-index: 10;
         }
-
-        /* 📌 بيانات المتجر */
-        .store-name {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .store-location {
-            font-size: 20px;
-            font-weight: 600;
-            opacity: 0.95;
-            margin-bottom: 15px;
-        }
-        .store-features {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            flex-wrap: wrap;
-            font-size: 15px;
-        }
-        .feature {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* 📦 المنتجات */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 20px 15px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .product-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: 0.3s;
-            position: relative;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-        .del-btn {
+        .notify-btn {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            background: #ef4444;
+            top: 15px;
+            left: 90px;
+            background: #22c55e;
             color: white;
             border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
             cursor: pointer;
             display: none;
             z-index: 10;
         }
-        .admin-mode .del-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .admin-mode .notify-btn {display: block;}
+
+        /* 📌 بيانات المتجر */
+        .store-name {font-size: 28px; font-weight: bold; margin-bottom: 10px;}
+        .store-location {font-size: 20px; font-weight: 600; opacity: 0.95; margin-bottom: 15px;}
+        .store-features {display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; font-size: 15px;}
+        .feature {display: flex; align-items: center; gap: 5px;}
+
+        /* 📦 المنتجات */
+        .products-grid {display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px 15px; max-width: 1200px; margin: 0 auto;}
+        .product-card {background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: 0.3s; position: relative;}
+        .product-card:hover {transform: translateY(-5px);}
+        .del-btn {position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; display: none; z-index: 10;}
+        .admin-mode .del-btn {display: flex; align-items: center; justify-content: center;}
         
-        .product-img {
-            width: 100%;
-            height: 280px;
-            background: #eef2ff;
-            object-fit: cover;
-            display: block;
-        }
-        .product-name {
-            font-size: 20px;
-            font-weight: bold;
-            color: #222;
-            padding: 15px 15px 10px;
-            text-align: center;
-        }
+        .product-img {width: 100%; height: 280px; background: #eef2ff; object-fit: cover; display: block;}
+        .product-name {font-size: 20px; font-weight: bold; color: #222; padding: 15px 15px 10px; text-align: center;}
         
         /* 📞 أزرار التواصل */
-        .contact-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 0 15px 15px;
-        }
-        .call-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: #0b3d91;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-        }
-        .whatsapp-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: #25d366;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-        }
+        .contact-buttons {display: flex; flex-direction: column; gap: 10px; padding: 0 15px 15px;}
+        .call-btn {display: flex; align-items: center; justify-content: center; gap: 8px; background: #0b3d91; color: white; padding: 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 600;}
+        .whatsapp-btn {display: flex; align-items: center; justify-content: center; gap: 8px; background: #25d366; color: white; padding: 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 600;}
         
-        .add-fab {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            background: #22c55e;
-            color: white;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(34,197,94,0.4);
-            z-index: 90;
-        }
-        .admin-mode .add-fab {
-            display: flex;
-        }
+        .add-fab {position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: #22c55e; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 4px 15px rgba(34,197,94,0.4); z-index: 90;}
+        .admin-mode .add-fab {display: flex;}
 
         /* 🔐 النوافذ */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 200;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal.show {
-            display: flex;
-        }
-        .modal-box {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-box h2 {
-            color: #0b3d91;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .modal-box input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-size: 15px;
-        }
-        .modal-box button {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 8px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .btn-save {
-            background: #22c55e;
-            color: white;
-        }
-        .btn-close {
-            background: #ef4444;
-            color: white;
-        }
-        .preview-img {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin: 10px auto;
-            display: none;
-        }
+        .modal {position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;}
+        .modal.show {display: flex;}
+        .modal-box {background: white; border-radius: 16px; padding: 25px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;}
+        .modal-box h2 {color: #0b3d91; margin-bottom: 20px; text-align: center;}
+        .modal-box input {width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-size: 15px;}
+        .modal-box button {width: 100%; padding: 13px; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        .btn-save {background: #22c55e; color: white;}
+        .btn-close {background: #ef4444; color: white;}
+        .preview-img {width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin: 10px auto; display: none;}
         
-        .toast {
-            position: fixed;
-            top: 80px;
-            right: 50%;
-            transform: translateX(50%);
-            background: #22c55e;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            z-index: 300;
-            display: none;
-        }
-        .toast.show {
-            display: block;
-        }
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #0b3d91;
-            font-size: 18px;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #888;
-            font-size: 17px;
-        }
+        .toast {position: fixed; top: 80px; right: 50%; transform: translateX(50%); background: #22c55e; color: white; padding: 15px 30px; border-radius: 10px; font-size: 16px; z-index: 300; display: none;}
+        .toast.show {display: block;}
+        .loading {text-align: center; padding: 40px; color: #0b3d91; font-size: 18px;}
+        .empty-state {text-align: center; padding: 60px 20px; color: #888; font-size: 17px;}
 
         /* 📱 شاشات صغيرة */
         @media (max-width: 600px) {
-            .store-name {
-                font-size: 24px;
-            }
-            .store-location {
-                font-size: 18px;
-            }
+            .store-name {font-size: 24px;}
+            .store-location {font-size: 18px;}
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -280,9 +102,10 @@
 
     <div class="toast" id="toast">✅ تم الحفظ!</div>
 
-    <!-- 📌 رأس المتجر بدون صورة -->
+    <!-- 📌 رأس المتجر -->
     <div class="store-header">
         <button class="admin-btn" onclick="openPassModal()">⚙️ تحكم</button>
+        <button class="notify-btn" onclick="sendNotification()">🔔 إشعار</button>
         
         <h1 class="store-name">سيد مصطفى الحسيني - للتجارة العامة</h1>
         
@@ -328,7 +151,7 @@
             <input type="tel" id="prodPhone" placeholder="رقم الهاتف">
             <input type="tel" id="prodWhatsapp" placeholder="رقم الواتساب">
             <input type="hidden" id="editKey">
-            <button class="btn-save" onclick="saveProduct()">✅ حفظ</button>
+            <button class="btn-save" onclick="saveProduct()">✅ حفظ + إشعار</button>
             <button class="btn-close" onclick="closeModal('productModal')">إلغاء</button>
         </div>
     </div>
@@ -352,12 +175,47 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const productsRef = db.ref("products");
+        const notifyRef = db.ref("lastNotification");
+
+        // 🔔 طلب إذن الإشعارات
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
 
         function showToast(msg = "✅ تم الحفظ!") {
             const t = document.getElementById('toast');
             t.textContent = msg;
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        function showLocalNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: 'https://knknali86-bot.github.io/Saty6/',
+                    tag: 'store-update'
+                });
+            }
+        }
+
+        // 🔔 مراقبة الإشعارات الجديدة
+        notifyRef.on("value", snap => {
+            const notif = snap.val();
+            if (notif && notif.time > (localStorage.getItem('lastSeenNotif') || 0)) {
+                localStorage.setItem('lastSeenNotif', notif.time);
+                showLocalNotification(notif.title, notif.body);
+            }
+        });
+
+        function sendNotification(title = "تحديث جديد في المتجر!", body = "تم إضافة منتجات جديدة تفضلوا بزيارتنا") {
+            if (!isAdmin) return;
+            notifyRef.set({
+                title: title,
+                body: body,
+                time: Date.now()
+            });
+            showToast("✅ تم إرسال الإشعار للجميع! 🔔");
         }
 
         function previewImage(e) {
@@ -458,6 +316,8 @@
                 await productsRef.child(editKey).update({name, img, phone, whatsapp});
             } else {
                 await productsRef.push({name, img, phone, whatsapp, time: Date.now()});
+                // 🔔 إرسال إشعار تلقائي عند إضافة منتج جديد
+                sendNotification("✅ منتج جديد!", `تم إضافة: ${name}`);
             }
             showToast();
             closeModal('productModal');

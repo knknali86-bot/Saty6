@@ -12,7 +12,7 @@
         * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif;}
         body {background: #f8f9fa; min-height: 100vh; padding-bottom: 30px;}
 
-        /* 🖼️ الصورة تظهر كاملة من غير قص */
+        /* 🖼️ الصورة */
         .banner {
             width: 100%;
             background: #0b3d91;
@@ -71,7 +71,7 @@
         .add-fab {position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: #22c55e; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 4px 15px rgba(34,197,94,0.4); z-index: 90;}
         .admin-mode .add-fab {display: flex;}
 
-        /* 🔐 لوحة التحكم */
+        /* 🔐 النوافذ */
         .modal {position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;}
         .modal.show {display: flex;}
         .modal-box {background: white; border-radius: 16px; padding: 25px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;}
@@ -88,17 +88,17 @@
         .loading {text-align: center; padding: 40px; color: #0b3d91; font-size: 18px;}
         .empty-state {text-align: center; padding: 60px 20px; color: #888; font-size: 17px;}
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body id="pageBody">
 
     <div class="toast" id="toast">✅ تم الحفظ!</div>
 
-    <!-- 🖼️ الرابط الصحيح للصورة من GitHub -->
+    <!-- 🖼️ الصورة -->
     <div class="banner">
         <button class="admin-btn" onclick="openPassModal()">⚙️ تحكم</button>
-        <img class="banner-img" src="https://raw.githubusercontent.com/ikmali86-bot/syd-syd/main/syd-syd.jpg" alt="سيد مصطفى الحسيني - للتجارة العامة">
+        <img class="banner-img" src="https://i.imgur.com/zhJ8amy.jpg" alt="سيد مصطفى الحسيني - للتجارة العامة">
     </div>
 
     <!-- 📌 بيانات المتجر -->
@@ -106,7 +106,7 @@
         <h1 class="store-name" id="storeName">سيد مصطفى الحسيني - للتجارة العامة</h1>
         <p class="store-location" id="storeLocation"><i class="fas fa-map-marker-alt"></i> واسط - قضاء الصويرة</p>
         <div class="store-features">
-            <span class="feature"><i class="fas fa-star"></i> جودة عالية وأسعار منافسة</span>
+            <span class="feature"><i class="fas fa-star"></i جودة عالية وأسعار منافسة</span>
             <span class="feature"><i class="fas fa-truck"></i> توصيل لكافة المناطق</span>
         </div>
     </div>
@@ -122,7 +122,7 @@
     <!-- ➕ زر إضافة -->
     <a class="add-fab" id="addBtn" onclick="openAddModal()">+</a>
 
-    <!-- 🔐 كلمة المرور -->
+    <!-- 🔐 كلمة المرور - تفتح كل شيء -->
     <div class="modal" id="passModal">
         <div class="modal-box">
             <h2>🔐 لوحة التحكم</h2>
@@ -149,7 +149,7 @@
         </div>
     </div>
 
-    <!-- ⚙️ إعدادات المتجر -->
+    <!-- ⚙️ إعدادات المتجر - تفتح فقط بعد إدخال كلمة المرور -->
     <div class="modal" id="settingsModal">
         <div class="modal-box">
             <h2>⚙️ إعدادات المتجر</h2>
@@ -172,7 +172,7 @@
             measurementId: "G-0EB7540YN5"
         };
 
-        const ADMIN_PASS = "123456";
+        const ADMIN_PASS = "123456"; // 🔑 كلمة المرور
         let isAdmin = false;
         let currentImageData = "";
 
@@ -225,7 +225,7 @@
                 <div class="product-card" onclick="${isAdmin ? `editProduct('${item.key}','${item.name}','${item.img}','${item.phone||''}','${item.whatsapp||''}')` : ''}">
                     <button class="del-btn" onclick="event.stopPropagation(); deleteProduct('${item.key}')">×</button>
                     <img class="product-img" src="${item.img}" alt="${item.name}">
-                    <h3 class="product-name">${item.name}</td>
+                    <h3 class="product-name">${item.name}</h3>
                     <div class="contact-buttons">
                         <a class="call-btn" href="tel:${item.phone||''}" onclick="event.stopPropagation()">
                             <i class="fas fa-phone"></i> اتصال
@@ -237,18 +237,29 @@
                 </div>`).join('');
         });
 
+        // 🔐 فتح كلمة المرور
         function openPassModal() {document.getElementById('passModal').classList.add('show');}
         function closeModal(id) {document.getElementById(id).classList.remove('show');}
         function checkPass() {
             if (document.getElementById('adminPass').value === ADMIN_PASS) {
                 isAdmin = true;
                 document.getElementById('pageBody').classList.add('admin-mode');
-                closeModal('passModal');
                 showToast("✅ تم الدخول");
             } else alert("❌ كلمة المرور خطأ!");
         }
 
+        // ⚙️ فتح إعدادات المتجر - فقط بعد كلمة المرور الصحيحة
+        function openSettingsModal() {
+            if (!isAdmin) {
+                alert("❌ أدخل كلمة المرور أولاً!");
+                return;
+            }
+            closeModal('passModal');
+            document.getElementById('settingsModal').classList.add('show');
+        }
+
         function openAddModal() {
+            if (!isAdmin) return;
             document.getElementById('prodModalTitle').textContent = 'إضافة منتج جديد';
             document.getElementById('prodName').value = '';
             document.getElementById('prodPhone').value = '';
@@ -273,6 +284,7 @@
         }
 
         async function saveProduct() {
+            if (!isAdmin) return;
             const name = document.getElementById('prodName').value.trim();
             const phone = document.getElementById('prodPhone').value.trim();
             const whatsapp = document.getElementById('prodWhatsapp').value.trim();
@@ -290,16 +302,14 @@
         }
 
         async function deleteProduct(key) {
+            if (!isAdmin) return;
             if (!confirm("حذف المنتج؟")) return;
             await productsRef.child(key).remove();
             showToast("✅ تم الحذف");
         }
 
-        function openSettingsModal() {
-            closeModal('passModal');
-            document.getElementById('settingsModal').classList.add('show');
-        }
         async function saveSettings() {
+            if (!isAdmin) return;
             const storeName = document.getElementById('setStoreName').value.trim();
             const storeLocation = document.getElementById('setStoreLocation').value.trim();
             await settingsRef.set({storeName, storeLocation});

@@ -39,8 +39,7 @@
         .edit-btn {position: absolute; top: 8px; left: 48px; background: #3b82f6; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; display: none; z-index: 10;}
         .admin-mode .del-btn, .admin-mode .edit-btn {display: flex; align-items: center; justify-content: center;}
         
-        .product-img {width: 100%; height: 250px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); object-fit: cover; display: block;}
-        .product-img-placeholder {display: flex; align-items: center; justify-content: center; font-size: 50px; color: #0b3d91;}
+        .product-img {width: 100%; height: 250px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #0b3d91;}
         .product-name {font-size: 18px; font-weight: bold; padding: 12px 15px 5px; text-align: center;}
         .product-price {font-size: 16px; color: #d32f2f; font-weight: bold; text-align: center; padding-bottom: 10px;}
         
@@ -119,11 +118,10 @@
         let currentImageData = "";
         let products = [];
 
-        // تحميل المنتجات من التخزين المحلي
+        // تحميل المنتجات
         function loadProducts() {
             const saved = localStorage.getItem('storeProducts');
             products = saved ? JSON.parse(saved) : [
-                // منتجات افتراضية
                 {name: "جواز تركي أصلي", price: "25,000 دينار", img: "", phone: "", whatsapp: ""},
                 {name: "خيوط بلاستيكية", price: "12,000 دينار", img: "", phone: "", whatsapp: ""},
                 {name: "تبلور زراعي", price: "4,500 دينار", img: "", phone: "", whatsapp: ""},
@@ -143,7 +141,7 @@
                 <div class="product-card">
                     <button class="del-btn" onclick="deleteProduct(${i})">×</button>
                     <button class="edit-btn" onclick="editProduct(${i})"><i class="fas fa-pen"></i></button>
-                    ${p.img ? `<img class="product-img" src="${p.img}" alt="${p.name}">` : `<div class="product-img product-img-placeholder"><i class="fas fa-image"></i></div>`}
+                    ${p.img ? `<img class="product-img" src="${p.img}" alt="${p.name}">` : `<div class="product-img"><i class="fas fa-image"></i></div>`}
                     <h3 class="product-name">${p.name}</h3>
                     <div class="product-price">${p.price}</div>
                     <div class="contact-buttons">

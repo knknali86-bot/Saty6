@@ -63,6 +63,7 @@
         .admin-mode .del-btn {display: flex; align-items: center; justify-content: center;}
         
         .product-img {width: 100%; height: 280px; background: #eef2ff; object-fit: cover; display: block;}
+        .product-img-fallback {background: linear-gradient(135deg, #dbeafe, #bfdbfe); display: flex; align-items: center; justify-content: center; font-size: 60px; color: #0b3d91;}
         .product-name {font-size: 20px; font-weight: bold; color: #222; padding: 15px 15px 10px; text-align: center;}
         
         /* 📞 أزرار التواصل */
@@ -88,6 +89,7 @@
         .toast.show {display: block;}
         .loading {text-align: center; padding: 40px; color: #0b3d91; font-size: 18px;}
         .empty-state {text-align: center; padding: 60px 20px; color: #888; font-size: 17px;}
+        .error-state {text-align: center; padding: 60px 20px; color: #ef4444; font-size: 17px; display: none;}
 
         /* 📱 شاشات صغيرة */
         @media (max-width: 600px) {
@@ -126,6 +128,10 @@
     <div class="empty-state" id="emptyState" style="display:none;">
         <i class="fas fa-box-open" style="font-size:50px; color:#ddd;"></i>
         <p>لا توجد منتجات حتى الآن</p>
+    </div>
+    <div class="error-state" id="errorState">
+        <i class="fas fa-wifi-slash" style="font-size:50px; color:#fca5a5;"></i>
+        <p>مشكلة في الاتصال، جاري إعادة المحاولة...</p>
     </div>
 
     <!-- ➕ زر إضافة - مخفي حتى كلمة المرور -->
@@ -172,10 +178,21 @@
         let isAdmin = false;
         let currentImageData = "";
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const productsRef = db.ref("products");
-        const notifyRef = db.ref("lastNotification");
+        let app;
+        let db;
+        let productsRef;
+        let notifyRef;
+
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            productsRef = db.ref("products");
+            notifyRef = db.ref("lastNotification");
+        } catch (err) {
+            console.error("Firebase init error:", err);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+        }
 
         // 🔔 طلب إذن الإشعارات
         if ('Notification' in window && Notification.permission === 'default') {
@@ -193,23 +210,29 @@
             if ('Notification' in window && Notification.permission === 'granted') {
                 new Notification(title, {
                     body: body,
-                    icon: 'https://knknali86-bot.github.io/Saty6/',
+                    icon: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/store.svg',
                     tag: 'store-update'
                 });
             }
         }
 
         // 🔔 مراقبة الإشعارات الجديدة
-        notifyRef.on("value", snap => {
-            const notif = snap.val();
-            if (notif && notif.time > (localStorage.getItem('lastSeenNotif') || 0)) {
-                localStorage.setItem('lastSeenNotif', notif.time);
-                showLocalNotification(notif.title, notif.body);
-            }
-        });
+        if (notifyRef) {
+            notifyRef.on("value", snap => {
+                try {
+                    const notif = snap.val();
+                    if (notif && notif.time > (localStorage.getItem('lastSeenNotif') || 0)) {
+                        localStorage.setItem('lastSeenNotif', notif.time);
+                        showLocalNotification(notif.title, notif.body);
+                    }
+                } catch (e) {
+                    console.error("Notification error:", e);
+                }
+            });
+        }
 
         function sendNotification(title = "تحديث جديد في المتجر!", body = "تم إضافة منتجات جديدة تفضلوا بزيارتنا") {
-            if (!isAdmin) return;
+            if (!isAdmin || !notifyRef) return;
             notifyRef.set({
                 title: title,
                 body: body,
@@ -231,33 +254,53 @@
             }
         }
 
-        productsRef.on("value", snap => {
-            document.getElementById('loading').style.display = 'none';
-            const data = snap.val() || {};
-            const list = Object.entries(data).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.time||0)-(a.time||0));
-            
-            if (list.length === 0) {
-                document.getElementById('emptyState').style.display = 'block';
-                document.getElementById('productsGrid').innerHTML = '';
-                return;
+        // 🖼️ صورة افتراضية بدل الرابط المحظور
+        function getImageTag(src, alt) {
+            if (!src || src.startsWith('https://picsum.photos')) {
+                return `<div class="product-img product-img-fallback"><i class="fas fa-image"></i></div>`;
             }
-            document.getElementById('emptyState').style.display = 'none';
-            
-            document.getElementById('productsGrid').innerHTML = list.map(item => `
-                <div class="product-card" onclick="${isAdmin ? `editProduct('${item.key}','${item.name}','${item.img}','${item.phone||''}','${item.whatsapp||''}')` : ''}">
-                    <button class="del-btn" onclick="event.stopPropagation(); deleteProduct('${item.key}')">×</button>
-                    <img class="product-img" src="${item.img}" alt="${item.name}">
-                    <h3 class="product-name">${item.name}</h3>
-                    <div class="contact-buttons">
-                        <a class="call-btn" href="tel:${item.phone||''}" onclick="event.stopPropagation()">
-                            <i class="fas fa-phone"></i> اتصال
-                        </a>
-                        <a class="whatsapp-btn" href="https://wa.me/${(item.whatsapp||'').replace(/\D/g,'')}" target="_blank" onclick="event.stopPropagation()">
-                            <i class="fab fa-whatsapp"></i> واتساب
-                        </a>
-                    </div>
-                </div>`).join('');
-        });
+            return `<img class="product-img" src="${src}" alt="${alt}" onerror="this.parentElement.innerHTML='<div class=\'product-img product-img-fallback\'><i class=\'fas fa-image\'></i></div>'">`;
+        }
+
+        if (productsRef) {
+            productsRef.on("value", snap => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorState').style.display = 'none';
+                try {
+                    const data = snap.val() || {};
+                    const list = Object.entries(data).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.time||0)-(a.time||0));
+                    
+                    if (list.length === 0) {
+                        document.getElementById('emptyState').style.display = 'block';
+                        document.getElementById('productsGrid').innerHTML = '';
+                        return;
+                    }
+                    document.getElementById('emptyState').style.display = 'none';
+                    
+                    document.getElementById('productsGrid').innerHTML = list.map(item => `
+                        <div class="product-card" onclick="${isAdmin ? `editProduct('${item.key}','${item.name.replace(/'/g, "\\'")}','${item.img||''}','${item.phone||''}','${item.whatsapp||''}')` : ''}">
+                            <button class="del-btn" onclick="event.stopPropagation(); deleteProduct('${item.key}')">×</button>
+                            ${getImageTag(item.img, item.name)}
+                            <h3 class="product-name">${item.name}</h3>
+                            <div class="contact-buttons">
+                                <a class="call-btn" href="tel:${item.phone||''}" onclick="event.stopPropagation()">
+                                    <i class="fas fa-phone"></i> اتصال
+                                </a>
+                                <a class="whatsapp-btn" href="https://wa.me/${(item.whatsapp||'').replace(/\D/g,'')}" target="_blank" onclick="event.stopPropagation()">
+                                    <i class="fab fa-whatsapp"></i> واتساب
+                                </a>
+                            </div>
+                        </div>`).join('');
+                } catch (err) {
+                    console.error("Data error:", err);
+                    document.getElementById('errorState').style.display = 'block';
+                }
+            }, err => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                console.error("Firebase listener error:", err);
+            });
+        }
 
         function openPassModal() {
             document.getElementById('passModal').classList.add('show');
@@ -298,36 +341,47 @@
             document.getElementById('prodWhatsapp').value = whatsapp;
             document.getElementById('editKey').value = key;
             currentImageData = img;
-            document.getElementById('imgPreview').src = img;
-            document.getElementById('imgPreview').style.display = 'block';
+            if (img && !img.startsWith('https://picsum.photos')) {
+                document.getElementById('imgPreview').src = img;
+                document.getElementById('imgPreview').style.display = 'block';
+            } else {
+                document.getElementById('imgPreview').style.display = 'none';
+            }
             document.getElementById('productModal').classList.add('show');
         }
 
         async function saveProduct() {
-            if (!isAdmin) return;
+            if (!isAdmin || !productsRef) return;
             const name = document.getElementById('prodName').value.trim();
             const phone = document.getElementById('prodPhone').value.trim();
             const whatsapp = document.getElementById('prodWhatsapp').value.trim();
             const editKey = document.getElementById('editKey').value;
-            const img = currentImageData || "https://picsum.photos/400/400";
+            const img = currentImageData || "";
             if (!name) return alert("أدخلي اسم المنتج!");
 
-            if (editKey) {
-                await productsRef.child(editKey).update({name, img, phone, whatsapp});
-            } else {
-                await productsRef.push({name, img, phone, whatsapp, time: Date.now()});
-                // 🔔 إرسال إشعار تلقائي عند إضافة منتج جديد
-                sendNotification("✅ منتج جديد!", `تم إضافة: ${name}`);
+            try {
+                if (editKey) {
+                    await productsRef.child(editKey).update({name, img, phone, whatsapp});
+                } else {
+                    await productsRef.push({name, img, phone, whatsapp, time: Date.now()});
+                    sendNotification("✅ منتج جديد!", `تم إضافة: ${name}`);
+                }
+                showToast();
+                closeModal('productModal');
+            } catch (err) {
+                alert("❌ خطأ في الحفظ، تأكدي من الإنترنت!");
             }
-            showToast();
-            closeModal('productModal');
         }
 
         async function deleteProduct(key) {
-            if (!isAdmin) return;
+            if (!isAdmin || !productsRef) return;
             if (!confirm("حذف المنتج؟")) return;
-            await productsRef.child(key).remove();
-            showToast("✅ تم الحذف");
+            try {
+                await productsRef.child(key).remove();
+                showToast("✅ تم الحذف");
+            } catch (err) {
+                alert("❌ خطأ في الحذف!");
+            }
         }
     </script>
 </body>

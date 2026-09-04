@@ -5,18 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سيد مصطفى الحسيني - للتجارة العامة</title>
     
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif;}
-        body {background: #f8f9fa; min-height: 100vh; padding-bottom: 30px;}
+        body {background: #f8f9fa; min-height: 100vh; padding-bottom: 90px;}
 
         /* 📌 رأس المتجر */
         .store-header {
             background: linear-gradient(135deg, #0b3d91, #1e5799);
             color: white;
-            padding: 30px 15px;
+            padding: 20px 15px;
             text-align: center;
             position: relative;
         }
@@ -31,47 +28,29 @@
             border-radius: 8px;
             font-size: 14px;
             cursor: pointer;
-            z-index: 10;
         }
-        .notify-btn {
-            position: absolute;
-            top: 15px;
-            left: 90px;
-            background: #22c55e;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            display: none;
-            z-index: 10;
-        }
-        .admin-mode .notify-btn {display: block;}
-
-        /* 📌 بيانات المتجر */
-        .store-name {font-size: 28px; font-weight: bold; margin-bottom: 10px;}
-        .store-location {font-size: 20px; font-weight: 600; opacity: 0.95; margin-bottom: 15px;}
-        .store-features {display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; font-size: 15px;}
-        .feature {display: flex; align-items: center; gap: 5px;}
+        .store-name {font-size: 24px; font-weight: bold; margin-bottom: 8px;}
+        .store-location {font-size: 16px; opacity: 0.9; margin-bottom: 10px;}
 
         /* 📦 المنتجات */
         .products-grid {display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px 15px; max-width: 1200px; margin: 0 auto;}
-        .product-card {background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: 0.3s; position: relative;}
-        .product-card:hover {transform: translateY(-5px);}
+        .product-card {background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative;}
         .del-btn {position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; display: none; z-index: 10;}
-        .admin-mode .del-btn {display: flex; align-items: center; justify-content: center;}
+        .edit-btn {position: absolute; top: 8px; left: 48px; background: #3b82f6; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; display: none; z-index: 10;}
+        .admin-mode .del-btn, .admin-mode .edit-btn {display: flex; align-items: center; justify-content: center;}
         
-        .product-img {width: 100%; height: 280px; background: #eef2ff; object-fit: cover; display: block;}
-        .product-img-fallback {background: linear-gradient(135deg, #dbeafe, #bfdbfe); display: flex; align-items: center; justify-content: center; font-size: 60px; color: #0b3d91;}
-        .product-name {font-size: 20px; font-weight: bold; color: #222; padding: 15px 15px 10px; text-align: center;}
+        .product-img {width: 100%; height: 250px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); object-fit: cover; display: block;}
+        .product-img-placeholder {display: flex; align-items: center; justify-content: center; font-size: 50px; color: #0b3d91;}
+        .product-name {font-size: 18px; font-weight: bold; padding: 12px 15px 5px; text-align: center;}
+        .product-price {font-size: 16px; color: #d32f2f; font-weight: bold; text-align: center; padding-bottom: 10px;}
         
-        /* 📞 أزرار التواصل */
-        .contact-buttons {display: flex; flex-direction: column; gap: 10px; padding: 0 15px 15px;}
-        .call-btn {display: flex; align-items: center; justify-content: center; gap: 8px; background: #0b3d91; color: white; padding: 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 600;}
-        .whatsapp-btn {display: flex; align-items: center; justify-content: center; gap: 8px; background: #25d366; color: white; padding: 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 600;}
+        /* 📞 أزرار */
+        .contact-buttons {display: flex; flex-direction: column; gap: 8px; padding: 0 15px 15px;}
+        .call-btn {display: flex; align-items: center; justify-content: center; gap: 8px; background: #0b3d91; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 14px;}
+        .whatsapp-btn {display: flex; align-items: center; justify-content: center; gap: 8px; background: #25d366; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 14px;}
         
-        .add-fab {position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: #22c55e; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 4px 15px rgba(34,197,94,0.4); z-index: 90;}
+        /* ➕ زر إضافة */
+        .add-fab {position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; background: #22c55e; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 4px 15px rgba(34,197,94,0.4); z-index: 90;}
         .admin-mode .add-fab {display: flex;}
 
         /* 🔐 النوافذ */
@@ -85,17 +64,8 @@
         .btn-close {background: #ef4444; color: white;}
         .preview-img {width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin: 10px auto; display: none;}
         
-        .toast {position: fixed; top: 80px; right: 50%; transform: translateX(50%); background: #22c55e; color: white; padding: 15px 30px; border-radius: 10px; font-size: 16px; z-index: 300; display: none;}
+        .toast {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #22c55e; color: white; padding: 20px 30px; border-radius: 10px; font-size: 16px; z-index: 300; display: none;}
         .toast.show {display: block;}
-        .loading {text-align: center; padding: 40px; color: #0b3d91; font-size: 18px;}
-        .empty-state {text-align: center; padding: 60px 20px; color: #888; font-size: 17px;}
-        .error-state {text-align: center; padding: 60px 20px; color: #ef4444; font-size: 17px; display: none;}
-
-        /* 📱 شاشات صغيرة */
-        @media (max-width: 600px) {
-            .store-name {font-size: 24px;}
-            .store-location {font-size: 18px;}
-        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -107,138 +77,87 @@
     <!-- 📌 رأس المتجر -->
     <div class="store-header">
         <button class="admin-btn" onclick="openPassModal()">⚙️ تحكم</button>
-        <button class="notify-btn" onclick="sendNotification()">🔔 إشعار</button>
-        
         <h1 class="store-name">سيد مصطفى الحسيني - للتجارة العامة</h1>
-        
-        <p class="store-location">
-            <i class="fas fa-map-marker-alt"></i> واسط - قضاء الصويرة
-        </p>
-        
-        <div class="store-features">
-            <span class="feature"><i class="fas fa-seedling"></i> مواد زراعية</span>
-            <span class="feature"><i class="fas fa-box"></i> جادر ونايلون</span>
-            <span class="feature"><i class="fas fa-thread"></i> خيط كبوب</span>
-        </div>
+        <p class="store-location"><i class="fas fa-map-marker-alt"></i> واسط - قضاء الصويرة</p>
     </div>
 
     <!-- 📦 المنتجات -->
     <div class="products-grid" id="productsGrid"></div>
-    <div class="loading" id="loading">جاري تحميل المنتجات...</div>
-    <div class="empty-state" id="emptyState" style="display:none;">
-        <i class="fas fa-box-open" style="font-size:50px; color:#ddd;"></i>
-        <p>لا توجد منتجات حتى الآن</p>
-    </div>
-    <div class="error-state" id="errorState">
-        <i class="fas fa-wifi-slash" style="font-size:50px; color:#fca5a5;"></i>
-        <p>مشكلة في الاتصال، جاري إعادة المحاولة...</p>
-    </div>
 
-    <!-- ➕ زر إضافة - مخفي حتى كلمة المرور -->
-    <a class="add-fab" id="addBtn" onclick="openAddModal()">+</a>
+    <!-- ➕ زر إضافة -->
+    <a class="add-fab" onclick="openAddModal()">+</a>
 
-    <!-- 🔐 نافذة كلمة المرور -->
+    <!-- 🔐 كلمة المرور -->
     <div class="modal" id="passModal">
         <div class="modal-box">
             <h2>🔐 لوحة التحكم</h2>
-            <input type="password" id="adminPass" placeholder="اكتبي كلمة المرور">
+            <input type="password" id="adminPass" placeholder="كلمة المرور">
             <button class="btn-save" onclick="checkPass()">دخول</button>
             <button class="btn-close" onclick="closeModal('passModal')">إلغاء</button>
         </div>
     </div>
 
-    <!-- ➕ إضافة/تعديل منتج فقط -->
+    <!-- ➕ إضافة/تعديل منتج -->
     <div class="modal" id="productModal">
         <div class="modal-box">
             <h2 id="prodModalTitle">إضافة منتج جديد</h2>
             <input type="text" id="prodName" placeholder="اسم المنتج">
+            <input type="text" id="prodPrice" placeholder="السعر">
             <input type="file" id="prodImage" accept="image/*" onchange="previewImage(event)">
             <img id="imgPreview" class="preview-img">
             <input type="tel" id="prodPhone" placeholder="رقم الهاتف">
             <input type="tel" id="prodWhatsapp" placeholder="رقم الواتساب">
-            <input type="hidden" id="editKey">
-            <button class="btn-save" onclick="saveProduct()">✅ حفظ + إشعار</button>
+            <input type="hidden" id="editIndex">
+            <button class="btn-save" onclick="saveProduct()">✅ حفظ</button>
             <button class="btn-close" onclick="closeModal('productModal')">إلغاء</button>
         </div>
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBmKumbv8I1WduHEuDwoux8XiXSRfkUQ4k",
-            authDomain: "husaini-store.firebaseapp.com",
-            databaseURL: "https://husaini-store-default-rtdb.firebaseio.com",
-            projectId: "husaini-store",
-            storageBucket: "husaini-store.firebasestorage.app",
-            messagingSenderId: "8351995699",
-            appId: "1:8351995699:web:a363775319ce69f26dd046",
-            measurementId: "G-0EB7540YN5"
-        };
-
         const ADMIN_PASS = "123456"; // 🔑 كلمة المرور
         let isAdmin = false;
         let currentImageData = "";
+        let products = [];
 
-        let app;
-        let db;
-        let productsRef;
-        let notifyRef;
-
-        try {
-            app = firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-            productsRef = db.ref("products");
-            notifyRef = db.ref("lastNotification");
-        } catch (err) {
-            console.error("Firebase init error:", err);
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('errorState').style.display = 'block';
+        // تحميل المنتجات من التخزين المحلي
+        function loadProducts() {
+            const saved = localStorage.getItem('storeProducts');
+            products = saved ? JSON.parse(saved) : [
+                // منتجات افتراضية
+                {name: "جواز تركي أصلي", price: "25,000 دينار", img: "", phone: "", whatsapp: ""},
+                {name: "خيوط بلاستيكية", price: "12,000 دينار", img: "", phone: "", whatsapp: ""},
+                {name: "تبلور زراعي", price: "4,500 دينار", img: "", phone: "", whatsapp: ""},
+                {name: "نايلون زراعي", price: "18,000 دينار", img: "", phone: "", whatsapp: ""},
+                {name: "خيط كبوب", price: "9,000 دينار", img: "", phone: "", whatsapp: ""},
+                {name: "بذور زراعية", price: "14,000 دينار", img: "", phone: "", whatsapp: ""}
+            ];
+            renderProducts();
         }
 
-        // 🔔 طلب إذن الإشعارات
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
+        function saveToStorage() {
+            localStorage.setItem('storeProducts', JSON.stringify(products));
+        }
+
+        function renderProducts() {
+            document.getElementById('productsGrid').innerHTML = products.map((p, i) => `
+                <div class="product-card">
+                    <button class="del-btn" onclick="deleteProduct(${i})">×</button>
+                    <button class="edit-btn" onclick="editProduct(${i})"><i class="fas fa-pen"></i></button>
+                    ${p.img ? `<img class="product-img" src="${p.img}" alt="${p.name}">` : `<div class="product-img product-img-placeholder"><i class="fas fa-image"></i></div>`}
+                    <h3 class="product-name">${p.name}</h3>
+                    <div class="product-price">${p.price}</div>
+                    <div class="contact-buttons">
+                        <a class="call-btn" href="tel:${p.phone || ''}"><i class="fas fa-phone"></i> اتصال</a>
+                        <a class="whatsapp-btn" href="https://wa.me/${(p.whatsapp || '').replace(/\D/g,'')}" target="_blank"><i class="fab fa-whatsapp"></i> واتساب</a>
+                    </div>
+                </div>`).join('');
         }
 
         function showToast(msg = "✅ تم الحفظ!") {
             const t = document.getElementById('toast');
             t.textContent = msg;
             t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2500);
-        }
-
-        function showLocalNotification(title, body) {
-            if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification(title, {
-                    body: body,
-                    icon: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/store.svg',
-                    tag: 'store-update'
-                });
-            }
-        }
-
-        // 🔔 مراقبة الإشعارات الجديدة
-        if (notifyRef) {
-            notifyRef.on("value", snap => {
-                try {
-                    const notif = snap.val();
-                    if (notif && notif.time > (localStorage.getItem('lastSeenNotif') || 0)) {
-                        localStorage.setItem('lastSeenNotif', notif.time);
-                        showLocalNotification(notif.title, notif.body);
-                    }
-                } catch (e) {
-                    console.error("Notification error:", e);
-                }
-            });
-        }
-
-        function sendNotification(title = "تحديث جديد في المتجر!", body = "تم إضافة منتجات جديدة تفضلوا بزيارتنا") {
-            if (!isAdmin || !notifyRef) return;
-            notifyRef.set({
-                title: title,
-                body: body,
-                time: Date.now()
-            });
-            showToast("✅ تم إرسال الإشعار للجميع! 🔔");
+            setTimeout(() => t.classList.remove('show'), 2000);
         }
 
         function previewImage(e) {
@@ -254,61 +173,8 @@
             }
         }
 
-        // 🖼️ صورة افتراضية بدل الرابط المحظور
-        function getImageTag(src, alt) {
-            if (!src || src.startsWith('https://picsum.photos')) {
-                return `<div class="product-img product-img-fallback"><i class="fas fa-image"></i></div>`;
-            }
-            return `<img class="product-img" src="${src}" alt="${alt}" onerror="this.parentElement.innerHTML='<div class=\'product-img product-img-fallback\'><i class=\'fas fa-image\'></i></div>'">`;
-        }
-
-        if (productsRef) {
-            productsRef.on("value", snap => {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('errorState').style.display = 'none';
-                try {
-                    const data = snap.val() || {};
-                    const list = Object.entries(data).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.time||0)-(a.time||0));
-                    
-                    if (list.length === 0) {
-                        document.getElementById('emptyState').style.display = 'block';
-                        document.getElementById('productsGrid').innerHTML = '';
-                        return;
-                    }
-                    document.getElementById('emptyState').style.display = 'none';
-                    
-                    document.getElementById('productsGrid').innerHTML = list.map(item => `
-                        <div class="product-card" onclick="${isAdmin ? `editProduct('${item.key}','${item.name.replace(/'/g, "\\'")}','${item.img||''}','${item.phone||''}','${item.whatsapp||''}')` : ''}">
-                            <button class="del-btn" onclick="event.stopPropagation(); deleteProduct('${item.key}')">×</button>
-                            ${getImageTag(item.img, item.name)}
-                            <h3 class="product-name">${item.name}</h3>
-                            <div class="contact-buttons">
-                                <a class="call-btn" href="tel:${item.phone||''}" onclick="event.stopPropagation()">
-                                    <i class="fas fa-phone"></i> اتصال
-                                </a>
-                                <a class="whatsapp-btn" href="https://wa.me/${(item.whatsapp||'').replace(/\D/g,'')}" target="_blank" onclick="event.stopPropagation()">
-                                    <i class="fab fa-whatsapp"></i> واتساب
-                                </a>
-                            </div>
-                        </div>`).join('');
-                } catch (err) {
-                    console.error("Data error:", err);
-                    document.getElementById('errorState').style.display = 'block';
-                }
-            }, err => {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('errorState').style.display = 'block';
-                console.error("Firebase listener error:", err);
-            });
-        }
-
-        function openPassModal() {
-            document.getElementById('passModal').classList.add('show');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('show');
-        }
+        function openPassModal() { document.getElementById('passModal').classList.add('show'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
         function checkPass() {
             if (document.getElementById('adminPass').value === ADMIN_PASS) {
@@ -316,33 +182,32 @@
                 document.getElementById('pageBody').classList.add('admin-mode');
                 closeModal('passModal');
                 showToast("✅ أهلاً بك!");
-            } else {
-                alert("❌ كلمة المرور خطأ!");
-            }
+            } else { alert("❌ كلمة المرور خطأ!"); }
         }
 
         function openAddModal() {
-            if (!isAdmin) return;
             document.getElementById('prodModalTitle').textContent = 'إضافة منتج جديد';
             document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
             document.getElementById('prodPhone').value = '';
             document.getElementById('prodWhatsapp').value = '';
-            document.getElementById('editKey').value = '';
+            document.getElementById('editIndex').value = '';
             document.getElementById('imgPreview').style.display = 'none';
             currentImageData = '';
             document.getElementById('productModal').classList.add('show');
         }
 
-        function editProduct(key, name, img, phone, whatsapp) {
-            if (!isAdmin) return;
+        function editProduct(i) {
             document.getElementById('prodModalTitle').textContent = 'تعديل المنتج';
-            document.getElementById('prodName').value = name;
-            document.getElementById('prodPhone').value = phone;
-            document.getElementById('prodWhatsapp').value = whatsapp;
-            document.getElementById('editKey').value = key;
-            currentImageData = img;
-            if (img && !img.startsWith('https://picsum.photos')) {
-                document.getElementById('imgPreview').src = img;
+            const p = products[i];
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodPrice').value = p.price;
+            document.getElementById('prodPhone').value = p.phone;
+            document.getElementById('prodWhatsapp').value = p.whatsapp;
+            document.getElementById('editIndex').value = i;
+            currentImageData = p.img;
+            if (p.img) {
+                document.getElementById('imgPreview').src = p.img;
                 document.getElementById('imgPreview').style.display = 'block';
             } else {
                 document.getElementById('imgPreview').style.display = 'none';
@@ -350,39 +215,35 @@
             document.getElementById('productModal').classList.add('show');
         }
 
-        async function saveProduct() {
-            if (!isAdmin || !productsRef) return;
+        function saveProduct() {
             const name = document.getElementById('prodName').value.trim();
+            const price = document.getElementById('prodPrice').value.trim();
             const phone = document.getElementById('prodPhone').value.trim();
             const whatsapp = document.getElementById('prodWhatsapp').value.trim();
-            const editKey = document.getElementById('editKey').value;
-            const img = currentImageData || "";
-            if (!name) return alert("أدخلي اسم المنتج!");
+            const editIndex = document.getElementById('editIndex').value;
+            if (!name || !price) return alert("أدخلي الاسم والسعر!");
 
-            try {
-                if (editKey) {
-                    await productsRef.child(editKey).update({name, img, phone, whatsapp});
-                } else {
-                    await productsRef.push({name, img, phone, whatsapp, time: Date.now()});
-                    sendNotification("✅ منتج جديد!", `تم إضافة: ${name}`);
-                }
-                showToast();
-                closeModal('productModal');
-            } catch (err) {
-                alert("❌ خطأ في الحفظ، تأكدي من الإنترنت!");
+            const prod = {name, price, img: currentImageData || "", phone, whatsapp};
+            if (editIndex !== '') {
+                products[editIndex] = prod;
+            } else {
+                products.push(prod);
             }
+            saveToStorage();
+            renderProducts();
+            closeModal('productModal');
+            showToast();
         }
 
-        async function deleteProduct(key) {
-            if (!isAdmin || !productsRef) return;
+        function deleteProduct(i) {
             if (!confirm("حذف المنتج؟")) return;
-            try {
-                await productsRef.child(key).remove();
-                showToast("✅ تم الحذف");
-            } catch (err) {
-                alert("❌ خطأ في الحذف!");
-            }
+            products.splice(i, 1);
+            saveToStorage();
+            renderProducts();
+            showToast("✅ تم الحذف");
         }
+
+        loadProducts();
     </script>
 </body>
 </html>
